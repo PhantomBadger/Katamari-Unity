@@ -39,9 +39,7 @@ public class CameraController : MonoBehaviour {
 
         //Update the position and reposition based on the forward vector
         Vector3 newPos = katamari.transform.position + Vector3.Scale(offset, forwardVector);
-        transform.position = newPos;
 
-        newPos = transform.position;
         newPos.y = offset.y;
         transform.position = newPos;
 
