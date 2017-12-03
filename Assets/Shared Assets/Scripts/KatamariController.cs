@@ -4,14 +4,11 @@ using System.Collections.Generic;
 
 public class KatamariController : MonoBehaviour {
 
-    public float volume = 1.0f;
-    public GameObject colliderChild;
+    public float Volume = 1.0f;
+    public MeshCollider MeshCollider;
 
     Rigidbody rigid;
-    MeshCollider meshCollider;
-    [SerializeField]
     Vector3 forwardVector = Vector3.forward;
-    [SerializeField]
     Vector3 rightVector = Vector3.right;
     List<GameObject> attachedObjects;    
 
@@ -22,17 +19,13 @@ public class KatamariController : MonoBehaviour {
 
     enum DistortType { DistortToOrigin, DistortToFurthestAway };
 
-	// Use this for initialization
-	void Start () {
+	/// <summary>
+    /// Called at the start, gets all the references
+    /// </summary>
+	void Start ()
+    {
         //Create list of game object
         attachedObjects = new List<GameObject>();
-
-        //Make sure collider child is assigned
-        if (colliderChild == null)
-        {
-            Debug.LogError("Katamari does not have a Collider child assigned to the script");
-            return;
-        }
 
         //Get the rigidbody component
         rigid = GetComponent<Rigidbody>();
@@ -42,9 +35,7 @@ public class KatamariController : MonoBehaviour {
             return;
         }
 
-        //Get the Mesh Collider component
-        meshCollider = colliderChild.GetComponent<MeshCollider>();
-        if (meshCollider == null)
+        if (MeshCollider == null)
         {
             Debug.LogError("Katamari's Collider child does not have a Mesh Collider attached!");
             return;
@@ -54,7 +45,7 @@ public class KatamariController : MonoBehaviour {
         // Get the Camera Controller Script Component from the Camera
 
         //Close the mesh from it's prefab to prevent local changes affecting the prefab
-        meshCollider.sharedMesh = (Mesh)Instantiate(meshCollider.sharedMesh);
+        MeshCollider.sharedMesh = (Mesh)Instantiate(MeshCollider.sharedMesh);
 	}
 	
 	// Update is called once per frame
@@ -82,10 +73,7 @@ public class KatamariController : MonoBehaviour {
             tempPos += forwardVector * Speed;
             transform.position = tempPos;
 
-            #pragma warning disable 0618
-            //Deprecated, but we need it to rotate properly
-            transform.RotateAround(rightVector, ForwardRotSpeed);
-            #pragma warning restore 0618
+            transform.Rotate(rightVector, ForwardRotSpeed);
         }
 
         //Rotate to the Right
@@ -105,6 +93,7 @@ public class KatamariController : MonoBehaviour {
 
     void OnCollisionEnter(Collision col)
     {
+        Debug.Log(col.gameObject.name);
         GameObject colObj = col.gameObject;
 
         //Chjeck if the object is already attached to us, or can actually be stuck to us
@@ -113,7 +102,7 @@ public class KatamariController : MonoBehaviour {
             return;
         }
         //If it can be stuck to us, check that our volume is enough to stick it
-        else if (colObj.GetComponent<StickyObjectProperties>().volume <= (this.volume * AttachedVolumePercent) && !colObj.GetComponent<StickyObjectProperties>().isStuck)
+        else if (colObj.GetComponent<StickyObjectProperties>().volume <= (this.Volume * AttachedVolumePercent) && !colObj.GetComponent<StickyObjectProperties>().isStuck)
         {
             //Create a fixed joint to attach the object to us
             FixedJoint joint = gameObject.AddComponent<FixedJoint>();
@@ -121,7 +110,7 @@ public class KatamariController : MonoBehaviour {
 
             //Tell the object it is stuck to us and increase our volume
             colObj.GetComponent<StickyObjectProperties>().StickToObject(this.gameObject);
-            this.volume += colObj.GetComponent<StickyObjectProperties>().volume;
+            this.Volume += colObj.GetComponent<StickyObjectProperties>().volume;
 
             //Distort our mesh
             DistortMesh(colObj);
@@ -133,7 +122,7 @@ public class KatamariController : MonoBehaviour {
     void DistortMesh(GameObject attachedObject, DistortType distortType = DistortType.DistortToOrigin)
     {
         //Create a local copy of the mesh first of all
-        Mesh mesh = meshCollider.sharedMesh;
+        Mesh mesh = MeshCollider.sharedMesh;
         Vector3[] newVertices = mesh.vertices;
 
         int closestVertexIndex = 0;
@@ -193,7 +182,7 @@ public class KatamariController : MonoBehaviour {
         mesh.RecalculateBounds();
 
         //Assign the new mesh to the old mesh collider
-        meshCollider.sharedMesh = mesh;
+        MeshCollider.sharedMesh = mesh;
     }
 
     public Vector3 GetForwardVector()
