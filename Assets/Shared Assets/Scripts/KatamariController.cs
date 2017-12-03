@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class KatamariController : MonoBehaviour {
 
@@ -17,7 +18,11 @@ public class KatamariController : MonoBehaviour {
     const float TurningRotSpeed = 4.0f;
     const float AttachedVolumePercent = 0.5f;
 
-    enum DistortType { DistortToOrigin, DistortToFurthestAway };
+    enum DistortType
+    {
+        DISTORT_TO_ORIGIN,
+        DISTORT_TO_FURTHEST_AWAY
+    };
 
 	/// <summary>
     /// Called at the start, gets all the references
@@ -48,8 +53,11 @@ public class KatamariController : MonoBehaviour {
         MeshCollider.sharedMesh = (Mesh)Instantiate(MeshCollider.sharedMesh);
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	/// <summary>
+    /// Called once per frame, handles the user input and resets velocity
+    /// </summary>
+	void Update ()
+    {
         //Handle the user input
         UserInputHandler();
 
@@ -61,6 +69,9 @@ public class KatamariController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Handles the user input, rolls forward or turns using our own forward/right vectors
+    /// </summary>
     void UserInputHandler()
     {
         //We use our own forward and right vectors to simulate rolling, allows the katamari to roll in a straight line even with
@@ -91,6 +102,10 @@ public class KatamariController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called when entering the collider for something else, if applicable it sticks it to ourselves
+    /// </summary>
+    /// <param name="col">The collision data for the object we've hit</param>
     void OnCollisionEnter(Collision col)
     {
         Debug.Log(col.gameObject.name);
@@ -102,7 +117,7 @@ public class KatamariController : MonoBehaviour {
             return;
         }
         //If it can be stuck to us, check that our volume is enough to stick it
-        else if (colObj.GetComponent<StickyObjectProperties>().volume <= (this.Volume * AttachedVolumePercent) && !colObj.GetComponent<StickyObjectProperties>().isStuck)
+        else if (colObj.GetComponent<StickyObjectProperties>().Volume <= (this.Volume * AttachedVolumePercent) && !colObj.GetComponent<StickyObjectProperties>().IsStuck)
         {
             //Create a fixed joint to attach the object to us
             FixedJoint joint = gameObject.AddComponent<FixedJoint>();
@@ -110,16 +125,21 @@ public class KatamariController : MonoBehaviour {
 
             //Tell the object it is stuck to us and increase our volume
             colObj.GetComponent<StickyObjectProperties>().StickToObject(this.gameObject);
-            this.Volume += colObj.GetComponent<StickyObjectProperties>().volume;
+            this.Volume += colObj.GetComponent<StickyObjectProperties>().Volume;
 
             //Distort our mesh
             DistortMesh(colObj);
 
-            Debug.Log("Stuck object: " + colObj.name + " with volume: " + colObj.GetComponent<StickyObjectProperties>().volume);
+            Debug.Log("Stuck object: " + colObj.name + " with volume: " + colObj.GetComponent<StickyObjectProperties>().Volume);
         }
     }
 
-    void DistortMesh(GameObject attachedObject, DistortType distortType = DistortType.DistortToOrigin)
+    /// <summary>
+    /// Distorts our collision mesh to include the attached object
+    /// </summary>
+    /// <param name="attachedObject">The object we've attached to</param>
+    /// <param name="distortType">An optional enum dictating the type of distortion to use, defaults to distort the closest point on our mesh to the origin of the object</param>
+    void DistortMesh(GameObject attachedObject, DistortType distortType = DistortType.DISTORT_TO_ORIGIN)
     {
         //Create a local copy of the mesh first of all
         Mesh mesh = MeshCollider.sharedMesh;
@@ -144,34 +164,43 @@ public class KatamariController : MonoBehaviour {
         //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //sphere.transform.position = transform.TransformPoint(newVertices[closestVertexIndex]);
 
-        if (distortType == DistortType.DistortToOrigin)
+        switch (distortType)
         {
-            //Distort our mesh to the origin of the attached object
-            newVertices[closestVertexIndex] = transform.InverseTransformPoint(attachedObject.transform.position);
-        }
-        else if (distortType == DistortType.DistortToFurthestAway)
-        {
-            //Distort our mesh to the furthest vertices of the attached object
-
-            //Get the mesh of the attached object
-            Mesh attachedMesh = attachedObject.GetComponent<MeshCollider>().sharedMesh;
-
-            int furthestVertexIndex = 0;
-            float maxDistance = Mathf.NegativeInfinity;
-
-            //Scan all vertices to find the one furthest away
-            for (int i = 0; i < attachedMesh.vertexCount; i++)
-            {
-                Vector3 diff = attachedMesh.vertices[i] - attachedObject.transform.InverseTransformPoint(transform.position);
-                float dist = diff.sqrMagnitude;
-                if (dist > maxDistance)
+            case DistortType.DISTORT_TO_ORIGIN:
                 {
-                    maxDistance = dist;
-                    furthestVertexIndex = i;
+                    //Distort our mesh to the origin of the attached object
+                    newVertices[closestVertexIndex] = transform.InverseTransformPoint(attachedObject.transform.position);
+                    break;
                 }
-            }
+            case DistortType.DISTORT_TO_FURTHEST_AWAY:
+                {
+                    //Distort our mesh to the furthest vertices of the attached object
 
-            newVertices[closestVertexIndex] = transform.InverseTransformPoint(attachedObject.transform.TransformPoint(attachedMesh.vertices[furthestVertexIndex]));
+                    //Get the mesh of the attached object
+                    Mesh attachedMesh = attachedObject.GetComponent<MeshCollider>().sharedMesh;
+
+                    int furthestVertexIndex = 0;
+                    float maxDistance = Mathf.NegativeInfinity;
+
+                    //Scan all vertices to find the one furthest away
+                    for (int i = 0; i < attachedMesh.vertexCount; i++)
+                    {
+                        Vector3 diff = attachedMesh.vertices[i] - attachedObject.transform.InverseTransformPoint(transform.position);
+                        float dist = diff.sqrMagnitude;
+                        if (dist > maxDistance)
+                        {
+                            maxDistance = dist;
+                            furthestVertexIndex = i;
+                        }
+                    }
+
+                    newVertices[closestVertexIndex] = transform.InverseTransformPoint(attachedObject.transform.TransformPoint(attachedMesh.vertices[furthestVertexIndex]));
+                    break;
+                }
+            default:
+                {
+                    throw new NotImplementedException();
+                }
         }
 
         //Assign the new vertices to the old mesh
@@ -185,6 +214,10 @@ public class KatamariController : MonoBehaviour {
         MeshCollider.sharedMesh = mesh;
     }
 
+    /// <summary>
+    /// Gets the proxy forward vector of the object used for moving
+    /// </summary>
+    /// <returns>The proxy forward vector used for movement</returns>
     public Vector3 GetForwardVector()
     {
         return forwardVector;

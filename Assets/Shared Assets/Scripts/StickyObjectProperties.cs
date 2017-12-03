@@ -3,19 +3,22 @@ using System.Collections;
 
 public class StickyObjectProperties : MonoBehaviour {
 
-    public string objectName;
-    public float volume;
-    public bool isStuck = false;
+    public string ObjectName;
+    public float Volume;
+    public bool IsStuck = false;
 
     Rigidbody rigid;
     MeshCollider meshCollider;
 
-	// Use this for initialization
-	void Start () {
+	/// <summary>
+    /// Called at the start, used for initialisation
+    /// </summary>
+	void Start ()
+    {
         //If the name is empty give it our own temporary one
-        if (objectName == null || objectName == "")
+        if (ObjectName == null || ObjectName == "")
         {
-            objectName = gameObject.name;
+            ObjectName = gameObject.name;
         }
 
         //Get the rigidbody component
@@ -35,10 +38,14 @@ public class StickyObjectProperties : MonoBehaviour {
         }
 	}
 
-    public void StickToObject(GameObject obj)
+    /// <summary>
+    /// Sticks this object to another
+    /// </summary>
+    /// <param name="objectToStickTo">The object to stick to</param>
+    public void StickToObject(GameObject objectToStickTo)
     {
         //Make our parent the attached object so we rotate with it
-        this.transform.parent = obj.transform;
+        this.transform.parent = objectToStickTo.transform;
 
         //Cant disable the rigidbody, so we remove it
         Destroy(rigid);
@@ -47,8 +54,8 @@ public class StickyObjectProperties : MonoBehaviour {
         meshCollider.enabled = false;
 
         //Have all the Physics treat us as the parent/attached object
-        isStuck = true;
-        this.tag = obj.tag;
-        this.gameObject.layer = obj.layer;
+        IsStuck = true;
+        this.tag = objectToStickTo.tag;
+        this.gameObject.layer = objectToStickTo.layer;
     }
 }

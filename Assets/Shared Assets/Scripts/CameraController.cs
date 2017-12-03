@@ -3,17 +3,17 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour {
 
-    [SerializeField]
-    GameObject katamari;
-
-    [SerializeField]
-    Vector3 offset;
+    [SerializeField] private GameObject katamari;
+    [SerializeField] private Vector3 offset;
 
     KatamariController katamariController;
     Vector3 forwardVector;
 
-	// Use this for initialization
-	void Start () {
+	/// <summary>
+    /// Called at the start, initialises needed references
+    /// </summary>
+	void Start ()
+    {
         //Check that the Katamari Object isnt null
         if (katamari == null)
         {
@@ -32,8 +32,11 @@ public class CameraController : MonoBehaviour {
         transform.position = katamari.transform.position + offset;
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	/// <summary>
+    /// Called every frame, keeps the camera a set distance from the katamari, rotating as needed
+    /// </summary>
+	void Update ()
+    {
         //Get the forward vector from the katamari script
         forwardVector = katamariController.GetForwardVector();
 
