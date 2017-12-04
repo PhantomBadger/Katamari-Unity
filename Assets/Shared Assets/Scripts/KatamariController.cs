@@ -11,12 +11,12 @@ public class KatamariController : BaseController
     /// <summary>
     /// Called every frame, handles user input
     /// </summary>
-    protected override void Update()
+    protected override void FixedUpdate()
     {
         //Handle the user input
         UserInputHandler();
 
-        base.Update();
+        base.FixedUpdate();
     }
 
     /// <summary>
@@ -30,6 +30,8 @@ public class KatamariController : BaseController
         //Move Forward
         if (Input.GetKey(KeyCode.W))
         {
+            Debug.Log("Movement: " + forwardVector * Speed +
+    "\ndirection: " + forwardVector);
             Vector3 tempPos = transform.position;
             tempPos += forwardVector * Speed;
             transform.position = tempPos;
