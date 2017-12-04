@@ -30,8 +30,6 @@ public class KatamariController : BaseController
         //Move Forward
         if (Input.GetKey(KeyCode.W))
         {
-            Debug.Log("Movement: " + forwardVector * Speed +
-    "\ndirection: " + forwardVector);
             Vector3 tempPos = transform.position;
             tempPos += forwardVector * Speed;
             transform.position = tempPos;
