@@ -11,7 +11,7 @@ public class BaseController : MonoBehaviour
     protected Rigidbody rigid;
     protected List<GameObject> attachedObjects;
 
-    protected const float Speed = 0.15f;
+    protected const float Speed = 0.35f;
     protected const float ForwardRotSpeed = 4.0f;
     protected const float TurningRotSpeed = 4.0f;
     protected const float AttachedVolumePercent = 0.5f;
@@ -57,11 +57,11 @@ public class BaseController : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         //Reset velocity to prevent too much bouncing caused by the attached object
-        if (rigid.velocity.y > 0)
-        {
-            rigid.velocity = Vector3.zero;
-            rigid.angularVelocity = Vector3.zero;
-        }
+        //if (rigid.velocity.y > 0)
+        //{
+        //    rigid.velocity = Vector3.zero;
+        //    rigid.angularVelocity = Vector3.zero;
+        //}
     }
 
     /// <summary>
