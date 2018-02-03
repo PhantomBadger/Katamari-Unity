@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Updates the transform to match the position of the ball
+/// </summary>
 public class FirstPersonKatamariHead : MonoBehaviour
 {
     public GameObject Katamari;

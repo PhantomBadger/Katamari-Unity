@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+/// <summary>
+/// A third person instance of the ball controller to allow keyboard control
+/// </summary>
 public class KatamariController : BaseController
 {
     [SerializeField] Vector3 forwardVector = Vector3.forward;

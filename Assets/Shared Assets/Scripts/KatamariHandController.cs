@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Takes delta positions of the controllers when moved with the trigger down 
+/// and translates it into movement for the ball
+/// </summary>
 [RequireComponent(typeof(SteamVR_TrackedObject))]
 public class KatamariHandController : MonoBehaviour
 {
@@ -14,7 +18,8 @@ public class KatamariHandController : MonoBehaviour
     private SteamVR_Controller.Device steamVRController;
 
     private const float MinimumMovementThreshold = 0.01f;
-    private const float AngularVelocityScale = 20.0f;
+    private const float AngularVelocityImpulseScale = 20.0f;
+    private const float VelocityImpulseScale = 10.0f;
     private const float KatamariRadius = 2.0f;
 
     /// <summary>
@@ -87,7 +92,7 @@ public class KatamariHandController : MonoBehaviour
 
         //Calculate the new angular velocity, and then clamp it in the current direction
         //This should allow us to affect existing movements but not exceed our limit
-        Vector3 scaledAngularVelocity = angularVelocity * AngularVelocityScale;
+        Vector3 scaledAngularVelocity = angularVelocity * AngularVelocityImpulseScale;
         Vector3 newAngularVelocity = katamariRigidbody.angularVelocity + scaledAngularVelocity;
 
         if (showDebugMessages)
@@ -103,6 +108,9 @@ public class KatamariHandController : MonoBehaviour
             katamariRigidbody.angularVelocity.y < 0 ? Mathf.Max(scaledAngularVelocity.y, newAngularVelocity.y) : Mathf.Min(scaledAngularVelocity.y, newAngularVelocity.y),
             katamariRigidbody.angularVelocity.z < 0 ? Mathf.Max(scaledAngularVelocity.z, newAngularVelocity.z) : Mathf.Min(scaledAngularVelocity.z, newAngularVelocity.z));
 
+        //Calculate a scaled velocity
+        Vector3 scaledVelocity = velocity * VelocityImpulseScale;
+        katamariRigidbody.velocity = scaledVelocity;
     }
 
     /// <summary>

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class handles the remote controlling of the ball via moving the attached controller
+/// around a ball remote attached to the other controller.
+/// </summary>
 [RequireComponent(typeof(SteamVR_TrackedObject))]
 public class VRRemoteController : MonoBehaviour
 {
@@ -80,6 +84,10 @@ public class VRRemoteController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the ball in a given direction based on the direction expressed by the cursor instance
+    /// and the ball remote
+    /// </summary>
     private void MoveKatamari()
     {
         if (!cursorActive)

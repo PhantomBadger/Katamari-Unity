@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Base controller containing the common mesh distortion methods
+/// </summary>
 public class BaseController : MonoBehaviour
 {
     public float Volume = 1.0f;
@@ -70,7 +73,6 @@ public class BaseController : MonoBehaviour
     /// <param name="col">The collision data for the object we've hit</param>
     protected virtual void OnCollisionEnter(Collision col)
     {
-        Debug.Log(col.gameObject.name);
         GameObject colObj = col.gameObject;
 
         //Chjeck if the object is already attached to us, or can actually be stuck to us

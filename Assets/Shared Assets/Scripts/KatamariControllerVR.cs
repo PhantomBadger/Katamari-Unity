@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// VR instance of the ball controller to allow linear movement
+/// </summary>
 public class KatamariControllerVR : BaseController
 {
     private Vector3 lastDirection;

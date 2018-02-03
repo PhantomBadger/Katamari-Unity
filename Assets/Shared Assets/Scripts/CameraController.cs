@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraController : MonoBehaviour {
-
+/// <summary>
+/// Controls the camera in the Non-VR instances
+/// </summary>
+public class CameraController : MonoBehaviour
+{
     [SerializeField] private GameObject katamari;
     [SerializeField] private Vector3 offset;
 

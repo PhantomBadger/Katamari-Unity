@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StickyObjectProperties : MonoBehaviour {
-
+/// <summary>
+/// Contains the data needed to represent a sticky object
+/// </summary>
+public class StickyObjectProperties : MonoBehaviour
+{
     public string ObjectName;
     public float Volume;
     public bool IsStuck = false;
 
-    Rigidbody rigid;
-    MeshCollider meshCollider;
+    private Rigidbody rigid;
+    private MeshCollider meshCollider;
 
 	/// <summary>
     /// Called at the start, used for initialisation
