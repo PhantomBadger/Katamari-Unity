@@ -7,7 +7,7 @@ public class KatamariControllerVR : BaseController
     private Vector3 lastDirection;
 
     /// <summary>
-    /// Rolls toward a given direction, moving a set amount forward
+    /// Rolls toward a given direction, moving a set amount forward in a linear translation
     /// </summary>
     /// <param name="direction">The direction to roll towards</param>
     public void RollTowards(Vector3 direction)
@@ -23,13 +23,5 @@ public class KatamariControllerVR : BaseController
         //Rotate along the axis by a set amount
         transform.Rotate(axisVector, ForwardRotSpeed, Space.World);
         lastDirection = direction;
-    }
-
-    public void OnDrawGizmos()
-    {
-        if (lastDirection != null)
-        {
-            Gizmos.DrawLine(transform.position, transform.position + (lastDirection * 10));
-        }
     }
 }
